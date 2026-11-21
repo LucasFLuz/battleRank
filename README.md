@@ -16,9 +16,9 @@
 | Lucas Luz | *Preencher RA* | Full Stack / Arquitetura |
 
 ### 🔗 Links da Entrega
-- **Repositório no GitHub**: `https://github.com/SEU-USUARIO/battleRank`
-- **Board do Projeto (Kanban / Trello / Jira / GitHub Projects)**: `https://github.com/users/SEU-USUARIO/projects/1`
-- **Vídeo Demonstrativo da Sprint (AC1)**: `https://youtube.com/watch?v=SEU-VIDEO`
+- **Repositório no GitHub**: `https://github.com/LucasFLuz/battleRankc`
+- **Board do Projeto (Kanban / Trello / Jira / GitHub Projects)**: `(https://github.com/users/LucasFLuz/projects/1/views/2)`
+
 
 ---
 
