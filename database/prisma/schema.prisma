@@ -1,0 +1,103 @@
+// Prisma Schema para battleRank
+// AC1: Mapeamento de Treinos (workouts)
+// Estrutura modular preparada para expansão (AC2, AC3 e Prova Final)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// ENUMS (AC1)
+// ==========================================
+
+enum Goal {
+  HIPERTROFIA
+  EMAGRECIMENTO
+  RESISTENCIA
+  FORCA
+}
+
+enum Level {
+  INICIANTE
+  INTERMEDIARIO
+  AVANCADO
+}
+
+// ==========================================
+// MODELOS PRINCIPAIS (AC1)
+// ==========================================
+
+model Workout {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(100)
+  goal      Goal
+  level     Level
+  notes     String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relacionamentos futuros (AC2: Exercícios do Treino)
+  // exercises WorkoutExercise[]
+
+  @@map("workouts")
+}
+
+// ==========================================
+// PREPARAÇÃO DE ENTIDADES FUTURAS (AC2 / AC3 / PROVA FINAL)
+// ==========================================
+
+// AC2 / Prova Final: model User
+// id String @id @default(uuid())
+// name String @db.VarChar(100)
+// email String @unique @db.VarChar(150)
+// passwordHash String @map("password_hash")
+// avatarUrl String? @map("avatar_url")
+// createdAt DateTime @default(now()) @map("created_at")
+// updatedAt DateTime @updatedAt @map("updated_at")
+
+// AC2: model Exercise
+// id String @id @default(uuid())
+// name String @db.VarChar(100)
+// category String @db.VarChar(50)
+// description String? @db.Text
+// createdAt DateTime @default(now()) @map("created_at")
+// updatedAt DateTime @updatedAt @map("updated_at")
+
+// AC2: model WorkoutExercise
+// id String @id @default(uuid())
+// workoutId String @map("workout_id")
+// exerciseId String @map("exercise_id")
+// sets Int @default(3)
+// repetitions Int @default(10)
+// weight Float?
+// order Int @default(1)
+// createdAt DateTime @default(now()) @map("created_at")
+
+// AC3: model Execution
+// id String @id @default(uuid())
+// exerciseId String @map("exercise_id")
+// userId String @map("user_id")
+// weight Float
+// repetitions Int
+// performedAt DateTime @default(now()) @map("performed_at")
+
+// Prova Final: model Friendship
+// id String @id @default(uuid())
+// userId String @map("user_id")
+// friendId String @map("friend_id")
+// status String @default("PENDING")
+// createdAt DateTime @default(now()) @map("created_at")
+
+// Prova Final: model Ranking
+// id String @id @default(uuid())
+// userId String @map("user_id")
+// score Int @default(0)
+// period String
+// startDate DateTime @map("start_date")
+// endDate DateTime @map("end_date")
+// createdAt DateTime @default(now()) @map("created_at")
