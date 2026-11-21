@@ -93,10 +93,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div className="p-3 rounded-xl bg-dark-800/60 border border-dark-700/80">
             <div className="flex items-center gap-2 mb-1">
               <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
-              <p className="text-xs font-semibold text-slate-200">AC1: Treinos Ativa</p>
+              <p className="text-xs font-semibold text-slate-200">battleRank Club</p>
             </div>
             <p className="text-[11px] text-slate-400 leading-relaxed">
-              Pronto para expansão contínua nas próximas entregas.
+              Mantenha sua rotina de treinos ativa para subir nas ligas de atletas.
             </p>
           </div>
         </div>

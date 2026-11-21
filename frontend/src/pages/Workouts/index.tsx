@@ -49,7 +49,7 @@ export const WorkoutsPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 text-brand-400 text-xs font-semibold uppercase tracking-wider mb-1">
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Gestão de Treinos • AC1</span>
+            <span>Planilhas de Treino • Temporada Ativa</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Meus Treinos
@@ -83,13 +83,13 @@ export const WorkoutsPage: React.FC = () => {
           <p className="text-2xl font-black text-brand-400 mt-1">{hypertrophyCount}</p>
         </div>
         <div className="p-4 rounded-xl bg-dark-850 border border-dark-700">
-          <p className="text-xs text-slate-400 font-medium">Próxima AC</p>
-          <p className="text-xs font-bold text-cyan-400 mt-2">Exercícios & Cargas</p>
+          <p className="text-xs text-slate-400 font-medium">Frequência Alvo</p>
+          <p className="text-xs font-bold text-cyan-400 mt-2">4 a 6 dias / semana</p>
         </div>
         <div className="p-4 rounded-xl bg-dark-850 border border-dark-700">
-          <p className="text-xs text-slate-400 font-medium">Status do Banco</p>
+          <p className="text-xs text-slate-400 font-medium">Sincronização</p>
           <p className="text-xs font-bold text-emerald-400 mt-2 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" /> PostgreSQL Ativo
+            <span className="w-2 h-2 rounded-full bg-emerald-500" /> Nuvem Conectada
           </p>
         </div>
       </div>
