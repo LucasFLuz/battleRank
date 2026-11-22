@@ -162,6 +162,7 @@ export const WorkoutDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [exerciseToEdit, setExerciseToEdit] = useState<Exercise | null>(null);
+  const [deleteConfirmExercise, setDeleteConfirmExercise] = useState<{ id: string; name: string } | null>(null);
 
   const { data: workout, isLoading: isWorkoutLoading, isError: isWorkoutError } = useWorkout(id || "");
   const { data: exercises, isLoading: isExercisesLoading } = useExercises(id || "");
@@ -217,8 +218,6 @@ export const WorkoutDetailPage: React.FC = () => {
     setExerciseToEdit(ex);
     setIsModalOpen(true);
   };
-
-  const [deleteConfirmExercise, setDeleteConfirmExercise] = useState<{ id: string; name: string } | null>(null);
 
   const handleDelete = (exerciseId: string, name: string) => {
     setDeleteConfirmExercise({ id: exerciseId, name });

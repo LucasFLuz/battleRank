@@ -86,7 +86,7 @@ export const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSuccess, onCancel })
   };
 
   const onInvalid = (formErrors: FieldErrors<WorkoutFormData>) => {
-    const firstInvalidField = (["name", "goal", "level", "notes"] as const).find(
+    const firstInvalidField = (["name", "goal", "level", "modality", "notes"] as const).find(
       (field) => formErrors[field] !== undefined
     );
     if (firstInvalidField) setFocus(firstInvalidField);

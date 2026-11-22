@@ -96,7 +96,7 @@ export const WorkoutCard: React.FC<WorkoutCardProps> = ({ workout }) => {
         {/* Link para navegação - card inteiro clicável exceto menu */}
         <Link
           to={`/workouts/${workout.id}`}
-          className="block cursor-pointer"
+          className="relative z-10 block cursor-pointer"
           onClick={(e) => {
             // Evita navegação se clicou no menu
             if (isMenuOpen) {
