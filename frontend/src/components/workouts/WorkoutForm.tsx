@@ -6,7 +6,7 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
 import { useCreateWorkout } from "../../hooks/useWorkouts";
-import { GOAL_LABELS, LEVEL_LABELS } from "../../types/workout";
+import { GOAL_LABELS, LEVEL_LABELS, SCHEDULE_TYPE_LABELS, DAY_SHORT_LABELS, MODALITY_CATEGORIES } from "../../types/workout";
 
 const workoutFormSchema = z.object({
   name: z
@@ -20,7 +20,21 @@ const workoutFormSchema = z.object({
   level: z.enum(["INICIANTE", "INTERMEDIARIO", "AVANCADO"], {
     required_error: "Selecione o nível do treino.",
   }),
+  modality: z.enum([
+    "MUSCULACAO", "CROSSFIT", "CALISTENIA", "POWERLIFTING", "STRONGMAN", "FISICULTURISMO",
+    "CARDIO", "CAMINHADA", "CORRIDA", "NATACAO", "CICLISMO", "TRIATLON", "REMO", "ELIPTICO", "ESCADA", "PULAR_CORDA",
+    "FUTEBOL", "BASQUETE", "VOLEI", "HANDEBOL", "FUTSAL", "BEACH_TENNIS", "PADEL",
+    "TENIS", "SQUASH", "BADMINTON", "MESA_TENIS",
+    "BOXE", "MMA", "JIU_JITSU", "JUDO", "MUAY_THAI", "KARATE", "TAEKWONDO", "WRESTLING",
+    "FUNCIONAL", "YOGA", "PILATES", "MOBILIDADE", "ALONGAMENTO", "ANIMAL_FLOW",
+    "OUTROS"
+  ], {
+    required_error: "Selecione uma modalidade.",
+  }),
   notes: z.string().max(1000, "Observações devem ter no máximo 1000 caracteres.").optional(),
+  scheduleType: z.enum(["FIXED_DAYS", "FLEXIBLE"]).default("FLEXIBLE"),
+  daysOfWeek: z.array(z.number().int().min(0).max(6)).default([]),
+  frequency: z.number().int().min(1).max(7).optional(),
 });
 
 type WorkoutFormData = z.infer<typeof workoutFormSchema>;
@@ -36,6 +50,7 @@ export const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSuccess, onCancel })
     handleSubmit,
     reset,
     setFocus,
+    watch,
     formState: { errors },
   } = useForm<WorkoutFormData>({
     resolver: zodResolver(workoutFormSchema),
@@ -43,8 +58,13 @@ export const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSuccess, onCancel })
       name: "",
       goal: "HIPERTROFIA",
       level: "INTERMEDIARIO",
+      modality: "MUSCULACAO",
       notes: "",
+      scheduleType: "FLEXIBLE",
+      daysOfWeek: [],
+      frequency: 3,
     },
+    mode: "onChange",
   });
 
   const { mutate: createWorkout, isPending, error } = useCreateWorkout(() => {
@@ -57,7 +77,11 @@ export const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSuccess, onCancel })
       name: data.name,
       goal: data.goal,
       level: data.level,
+      modality: data.modality,
       notes: data.notes || undefined,
+      scheduleType: data.scheduleType,
+      daysOfWeek: data.daysOfWeek,
+      frequency: data.frequency,
     });
   };
 
@@ -77,6 +101,18 @@ export const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSuccess, onCancel })
     value,
     label,
   }));
+
+  const scheduleTypeOptions = Object.entries(SCHEDULE_TYPE_LABELS).map(([value, label]) => ({
+    value,
+    label,
+  }));
+
+  const daysOfWeekOptions = DAY_SHORT_LABELS.map((label, idx) => ({
+    value: idx,
+    label,
+  }));
+
+  const watchedScheduleType = watch("scheduleType", "FLEXIBLE");
 
   return (
     <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4" aria-busy={isPending}>
@@ -117,6 +153,81 @@ export const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSuccess, onCancel })
           {...register("level")}
         />
       </div>
+
+      <Select
+        label="Modalidade *"
+        required
+        options={MODALITY_CATEGORIES}
+        error={errors.modality?.message}
+        {...register("modality")}
+      />
+
+      {/* Programação / Agenda */}
+      <fieldset className="rounded-xl bg-dark-800/50 border border-dark-700/60 p-4 space-y-4">
+        <legend className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-brand-500" />
+          Programação do Treino
+        </legend>
+
+        <Select
+          label="Tipo de Agenda *"
+          required
+          options={scheduleTypeOptions}
+          error={errors.scheduleType?.message}
+          {...register("scheduleType")}
+        />
+
+        {watchedScheduleType === "FIXED_DAYS" && (
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-300">
+              Dias da Semana
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {daysOfWeekOptions.map((day) => {
+                const isChecked = watch("daysOfWeek")?.includes(day.value) || false;
+                return (
+                  <label
+                    key={day.value}
+                    className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border text-sm cursor-pointer transition-colors ${
+                      isChecked
+                        ? "bg-brand-500/20 border-brand-500/30 text-brand-300"
+                        : "bg-dark-850 border-dark-600 text-slate-200 hover:bg-dark-700"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      value={day.value}
+                      className="w-4 h-4 accent-brand-500"
+                      {...register("daysOfWeek")}
+                    />
+                    {day.label}
+                  </label>
+                );
+              })}
+            </div>
+            {errors.daysOfWeek?.message && (
+              <p className="text-xs font-medium text-red-400">{errors.daysOfWeek.message}</p>
+            )}
+          </div>
+        )}
+
+        {watchedScheduleType === "FLEXIBLE" && (
+          <div className="space-y-1.5">
+            <Input
+              label="Frequência Semanal (vezes)"
+              type="number"
+              min={1}
+              max={7}
+              placeholder="Ex: 3"
+              error={errors.frequency?.message}
+              {...register("frequency", { valueAsNumber: true })}
+            />
+            <p className="text-xs text-slate-400">
+              Quantas vezes por semana você pretende treinar este plano
+            </p>
+          </div>
+        )}
+      </fieldset>
 
       <div className="w-full space-y-1.5">
         <label

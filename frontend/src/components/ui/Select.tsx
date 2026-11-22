@@ -7,12 +7,23 @@ export interface SelectOption {
   label: string;
 }
 
+export interface SelectOptionGroup {
+  label: string;
+  options: readonly SelectOption[];
+}
+
+export type SelectOptions = readonly (SelectOption | SelectOptionGroup)[];
+
 export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
-  options: SelectOption[];
+  options: SelectOptions;
   placeholder?: string;
 }
+
+const isOptionGroup = (opt: SelectOption | SelectOptionGroup): opt is SelectOptionGroup => {
+  return "options" in opt;
+};
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   (
@@ -64,11 +75,24 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               {placeholder}
             </option>
           )}
-          {options.map((option) => (
-            <option key={option.value} value={option.value} className="bg-dark-850 text-slate-100">
-              {option.label}
-            </option>
-          ))}
+          {options.map((opt, _idx) => {
+            if (isOptionGroup(opt)) {
+              return (
+                <optgroup key={opt.label} label={opt.label}>
+                  {opt.options.map((option) => (
+                    <option key={option.value} value={option.value} className="bg-dark-850 text-slate-100">
+                      {option.label}
+                    </option>
+                  ))}
+                </optgroup>
+              );
+            }
+            return (
+              <option key={opt.value} value={opt.value} className="bg-dark-850 text-slate-100">
+                {opt.label}
+              </option>
+            );
+          })}
         </select>
         {error && (
           <p id={errorId} className="text-xs font-medium text-red-400">

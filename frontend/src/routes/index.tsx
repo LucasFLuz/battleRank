@@ -4,10 +4,14 @@ import { Sidebar } from "../components/layout/Sidebar";
 import { Header } from "../components/layout/Header";
 import { DashboardPage } from "../pages/Dashboard";
 import { WorkoutsPage } from "../pages/Workouts";
+import { WorkoutDetailPage } from "../pages/WorkoutDetail";
+import { WorkoutLivePage } from "../pages/WorkoutLive";
+import { HistoryPage } from "../pages/History";
 
 const PAGE_TITLES: Record<string, string> = {
   "/": "Dashboard Geral",
   "/workouts": "Meus Treinos",
+  "/history": "Histórico de Treinos",
   "/rankings": "Rankings de Atletas",
   "/community": "Feed Social",
 };
@@ -39,7 +43,9 @@ export const AppRoutes: React.FC = () => {
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/workouts" element={<WorkoutsPage />} />
-            {/* Redirecionamento padrão para /workouts ou dashboard */}
+            <Route path="/workouts/:id" element={<WorkoutDetailPage />} />
+            <Route path="/workouts/:id/live" element={<WorkoutLivePage />} />
+            <Route path="/history" element={<HistoryPage />} />
             <Route path="*" element={<WorkoutsPage />} />
           </Routes>
         </main>

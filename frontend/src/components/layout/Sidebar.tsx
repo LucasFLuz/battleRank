@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Dumbbell, LayoutDashboard, Trophy, Users, Flame, X } from "lucide-react";
+import { Dumbbell, LayoutDashboard, Trophy, Users, Flame, X, History } from "lucide-react";
 import { clsx } from "clsx";
 
 interface SidebarProps {
@@ -12,6 +12,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navItems = [
     { to: "/", label: "Dashboard", icon: LayoutDashboard },
     { to: "/workouts", label: "Meus Treinos", icon: Dumbbell },
+    { to: "/history", label: "Histórico", icon: History },
     { to: "/rankings", label: "Rankings", icon: Trophy, badge: "Em breve" },
     { to: "/community", label: "Feed Social", icon: Users, badge: "Em breve" },
   ];

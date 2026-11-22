@@ -73,7 +73,7 @@ export const WorkoutsPage: React.FC = () => {
       </div>
 
       {/* Métricas Rápidas */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="p-4 rounded-xl bg-dark-850 border border-dark-700">
           <p className="text-xs text-slate-400 font-medium">Total de Treinos</p>
           <p className="text-2xl font-black text-white mt-1">{totalWorkouts}</p>
@@ -85,12 +85,6 @@ export const WorkoutsPage: React.FC = () => {
         <div className="p-4 rounded-xl bg-dark-850 border border-dark-700">
           <p className="text-xs text-slate-400 font-medium">Frequência Alvo</p>
           <p className="text-xs font-bold text-cyan-400 mt-2">4 a 6 dias / semana</p>
-        </div>
-        <div className="p-4 rounded-xl bg-dark-850 border border-dark-700">
-          <p className="text-xs text-slate-400 font-medium">Sincronização</p>
-          <p className="text-xs font-bold text-emerald-400 mt-2 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" /> Nuvem Conectada
-          </p>
         </div>
       </div>
 

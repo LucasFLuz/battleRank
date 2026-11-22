@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { workoutRoutes } from "./workoutRoutes.js";
+import { exerciseRoutes } from "./exerciseRoutes.js";
+import { sessionRoutes } from "./sessionRoutes.js";
 
 const routes = Router();
 
@@ -11,9 +13,8 @@ routes.get("/health", (_req, res) => {
 // AC1: Entidade de Treinos
 routes.use("/workouts", workoutRoutes);
 
-// Rotas preparadas para as próximas ACs:
-// routes.use("/users", userRoutes);
-// routes.use("/exercises", exerciseRoutes);
-// routes.use("/rankings", rankingRoutes);
+// AC2: Exercícios individuais (PUT/DELETE) e Histórico de Sessões
+routes.use("/exercises", exerciseRoutes);
+routes.use("/sessions", sessionRoutes);
 
 export { routes };

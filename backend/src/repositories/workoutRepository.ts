@@ -1,5 +1,5 @@
 import { prisma } from "../config/prisma.js";
-import { CreateWorkoutDTO, Workout } from "../types/workout.js";
+import { CreateWorkoutDTO, UpdateWorkoutDTO, Workout } from "../types/workout.js";
 
 export class WorkoutRepository {
   async create(data: CreateWorkoutDTO): Promise<Workout> {
@@ -8,19 +8,20 @@ export class WorkoutRepository {
         name: data.name,
         goal: data.goal,
         level: data.level,
+        modality: data.modality,
         notes: data.notes ?? null,
+        scheduleType: data.scheduleType ?? "FLEXIBLE",
+        daysOfWeek: data.daysOfWeek ?? [],
+        frequency: data.frequency ?? null,
+      },
+      include: {
+        exercises: {
+          orderBy: { order: "asc" },
+        },
       },
     });
 
-    return {
-      id: created.id,
-      name: created.name,
-      goal: created.goal,
-      level: created.level,
-      notes: created.notes,
-      createdAt: created.createdAt,
-      updatedAt: created.updatedAt,
-    };
+    return created as Workout;
   }
 
   async findAll(): Promise<Workout[]> {
@@ -28,36 +29,73 @@ export class WorkoutRepository {
       orderBy: {
         createdAt: "desc",
       },
+      include: {
+        exercises: {
+          orderBy: { order: "asc" },
+        },
+        _count: {
+          select: {
+            exercises: true,
+            sessions: true,
+          },
+        },
+      },
     });
 
-    return workouts.map((w) => ({
-      id: w.id,
-      name: w.name,
-      goal: w.goal,
-      level: w.level,
-      notes: w.notes,
-      createdAt: w.createdAt,
-      updatedAt: w.updatedAt,
-    }));
+    return workouts as Workout[];
   }
 
   async findById(id: string): Promise<Workout | null> {
     const workout = await prisma.workout.findUnique({
       where: { id },
+      include: {
+        exercises: {
+          orderBy: { order: "asc" },
+        },
+        _count: {
+          select: {
+            exercises: true,
+            sessions: true,
+          },
+        },
+      },
     });
 
-    if (!workout) {
-      return null;
-    }
+    return (workout as Workout) || null;
+  }
 
-    return {
-      id: workout.id,
-      name: workout.name,
-      goal: workout.goal,
-      level: workout.level,
-      notes: workout.notes,
-      createdAt: workout.createdAt,
-      updatedAt: workout.updatedAt,
-    };
+  async update(id: string, data: UpdateWorkoutDTO): Promise<Workout> {
+    const updated = await prisma.workout.update({
+      where: { id },
+      data: {
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.goal !== undefined && { goal: data.goal }),
+        ...(data.level !== undefined && { level: data.level }),
+        ...(data.modality !== undefined && { modality: data.modality }),
+        ...(data.notes !== undefined && { notes: data.notes }),
+        ...(data.scheduleType !== undefined && { scheduleType: data.scheduleType }),
+        ...(data.daysOfWeek !== undefined && { daysOfWeek: data.daysOfWeek }),
+        ...(data.frequency !== undefined && { frequency: data.frequency }),
+      },
+      include: {
+        exercises: {
+          orderBy: { order: "asc" },
+        },
+        _count: {
+          select: {
+            exercises: true,
+            sessions: true,
+          },
+        },
+      },
+    });
+
+    return updated as Workout;
+  }
+
+  async delete(id: string): Promise<void> {
+    await prisma.workout.delete({
+      where: { id },
+    });
   }
 }
