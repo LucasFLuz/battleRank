@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html><head>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+<div id="out"></div>
+<script>
+  mermaid.initialize({ startOnLoad: false });
+  
+  const d1 = lowchart LR
+    Visitante((Visitante))
+    Atleta((Atleta Registrado))
+    Atleta --> Visitante
+
+    subgraph battleRank["Plataforma battleRank"]
+        UC_CAD["Cadastrar Conta"]
+        UC_LOG["Efetuar Login (JWT)"]
+        UC_DASH["Visualizar Dashboard e Volume"]
+        UC_TREINO["Gerenciar Fichas de Treino"]
+        UC_EXER["Configurar Exercicios da Ficha"]
+        UC_EXEC["Executar Treino em Tempo Real"]
+        UC_REST["Cronometrar Descanso"]
+        UC_PR["Notificar Recorde Pessoal (PR)"]
+        UC_HIST["Consultar Historico de Treinos"]
+        UC_RANK["Visualizar Leaderboard e Ligas"]
+        UC_FEED["Interagir no Feed Social"]
+        UC_LIKE["Apoiar Treino (Fist Bump)"]
+        UC_COMM["Comentar em Treino"]
+        UC_SEGUIR["Seguir / Deixar de Seguir"]
+    end
+
+    Visitante --- UC_CAD
+    Visitante --- UC_LOG
+    Atleta --- UC_DASH
+    Atleta --- UC_TREINO
+    Atleta --- UC_EXEC
+    Atleta --- UC_HIST
+    Atleta --- UC_RANK
+    Atleta --- UC_FEED
+    Atleta --- UC_SEGUIR
+
+    UC_TREINO -.->|include| UC_EXER
+    UC_EXEC -.->|include| UC_REST
+    UC_EXEC -.->|extend| UC_PR
+    UC_FEED -.->|extend| UC_LIKE
+    UC_FEED -.->|extend| UC_COMM;
+
+  const d2 = classDiagram
+    class WorkoutGoal {
+        <<enumeration>>
+        HIPERTROFIA
+        FORCA
+        RESISTENCIA
+        EMAGRECIMENTO
+    }
+    class Modality {
+        <<enumeration>>
+        FORCA
+        HIPERTROFIA
+        CARDIO
+        CALISTENIA
+        ALONGAMENTO
+    }
+    class Division {
+        <<enumeration>>
+        BRONZE
+        PRATA
+        OURO
+        DIAMANTE
+    }
+    class User {
+        -String id
+        -String name
+        -String email
+        -String password
+        -String avatarUrl
+        -Int xp
+        +calculateDivision() Division
+        +addXP(Int points) void
+        +getTotalVolume() Float
+    }
+    class Workout {
+        -String id
+        -String userId
+        -String name
+        -WorkoutGoal goal
+        -String level
+        +getEstimatedVolume() Float
+        +getExercisesCount() Int
+    }
+    class Exercise {
+        -String id
+        -String workoutId
+        -String name
+        -Modality modality
+        -Int sets
+        -Int repetitions
+        -Float weight
+        -Int restTime
+        -String notes
+        -Int order
+        +reorder(Int newOrder) void
+    }
+    class WorkoutSession {
+        -String id
+        -String workoutId
+        -DateTime startedAt
+        -DateTime endedAt
+        -Int durationSeconds
+        -Float totalVolume
+        -String notes
+        +finish(DateTime endedAt) void
+        +computeVolume() Float
+        +getPersonalRecordsCount() Int
+    }
+    class SessionLog {
+        -String id
+        -String sessionId
+        -String exerciseId
+        -Int setNumber
+        -Float weight
+        -Int repetitions
+        -Boolean isCompleted
+        -Boolean isPersonalRecord
+        +markCompleted() void
+    }
+    class Follow {
+        -String id
+        -String followerId
+        -String followingId
+    }
+    class SessionLike {
+        -String id
+        -String sessionId
+        -String userId
+    }
+    class SessionComment {
+        -String id
+        -String sessionId
+        -String userId
+        -String content
+    }
+    Workout ..> WorkoutGoal
+    Exercise ..> Modality
+    User ..> Division
+    User "1" --> "*" Workout
+    Workout "1" *-- "1..*" Exercise
+    Workout "1" --> "*" WorkoutSession
+    WorkoutSession "1" *-- "1..*" SessionLog
+    Exercise "1" --> "*" SessionLog
+    User "1" --> "*" Follow
+    User "1" --> "*" SessionLike
+    WorkoutSession "1" --> "*" SessionLike
+    User "1" --> "*" SessionComment
+    WorkoutSession "1" --> "*" SessionComment;
+
+  async function renderAll() {
+    try {
+      const res1 = await mermaid.render('g1', d1);
+      console.log('D1 OK');
+      const res2 = await mermaid.render('g2', d2);
+      console.log('D2 OK');
+      document.body.innerHTML += '<h1>SUCCESS</h1>' + res1.svg + res2.svg;
+    } catch(err) {
+      console.error('ERROR:', err);
+      document.body.innerHTML += '<h1>ERROR: ' + err.message + '</h1>';
+    }
+  }
+  renderAll();
+</script>
+
+
+</body></html>

@@ -49,40 +49,31 @@ O **battleRank** é uma plataforma fitness social inspirada no Strava e no Hevy 
 
 ### 4.1. Diagrama de Casos de Uso (UML)
 
-O Diagrama de Casos de Uso especifica os atores do sistema (**Visitante** e **Atleta Registrado**) e seus relacionamentos com as funcionalidades:
-
 ```mermaid
 flowchart LR
-    classDef actorStyle fill:#0f172a,stroke:#0284c7,stroke-width:2px,color:#fff;
-    classDef ucStyle fill:#f8fafc,stroke:#0f172a,stroke-width:1.5px,color:#0f172a;
-    classDef extStyle fill:#f0f9ff,stroke:#0284c7,stroke-width:1.5px,color:#0369a1;
+    Visitante((Visitante))
+    Atleta((Atleta Registrado))
+    Atleta --> Visitante
 
-    Visitante((Visitante)):::actorStyle
-    Atleta((Atleta Registrado)):::actorStyle
-
-    Atleta --|> Visitante
-
-    subgraph battleRank["Plataforma battleRank"]
-        UC_CAD(["Cadastrar Conta"]):::ucStyle
-        UC_LOG(["Efetuar Login (JWT)"]):::ucStyle
-
-        UC_DASH(["Visualizar Dashboard & Volume"]):::ucStyle
-        UC_TREINO(["Gerenciar Fichas de Treino"]):::ucStyle
-        UC_EXER(["Configurar Exercícios da Ficha"]):::ucStyle
-        UC_EXEC(["Executar Treino em Tempo Real"]):::ucStyle
-        UC_REST(["Cronometrar Descanso"]):::ucStyle
-        UC_PR(["Notificar Recorde Pessoal (PR)"]):::extStyle
-        UC_HIST(["Consultar Histórico de Treinos"]):::ucStyle
-        UC_RANK(["Visualizar Leaderboard & Ligas"]):::ucStyle
-        UC_FEED(["Interagir no Feed Social"]):::ucStyle
-        UC_LIKE(["Apoiar Treino (Fist Bump 👊)"]):::extStyle
-        UC_COMM(["Comentar em Treino"]):::extStyle
-        UC_SEGUIR(["Seguir / Deixar de Seguir"]):::ucStyle
+    subgraph battleRank [Plataforma battleRank]
+        UC_CAD([Cadastrar Conta])
+        UC_LOG([Efetuar Login])
+        UC_DASH([Visualizar Dashboard])
+        UC_TREINO([Gerenciar Treinos])
+        UC_EXER([Configurar Exercicios])
+        UC_EXEC([Executar Treino em Tempo Real])
+        UC_REST([Cronometrar Descanso])
+        UC_PR([Notificar Recorde Pessoal])
+        UC_HIST([Consultar Historico])
+        UC_RANK([Visualizar Leaderboard e Ligas])
+        UC_FEED([Interagir no Feed Social])
+        UC_LIKE([Apoiar Treino Fist Bump])
+        UC_COMM([Comentar em Treino])
+        UC_SEGUIR([Seguir Atleta])
     end
 
     Visitante --- UC_CAD
     Visitante --- UC_LOG
-
     Atleta --- UC_DASH
     Atleta --- UC_TREINO
     Atleta --- UC_EXEC
@@ -91,22 +82,20 @@ flowchart LR
     Atleta --- UC_FEED
     Atleta --- UC_SEGUIR
 
-    UC_TREINO -.->|«include»| UC_EXER
-    UC_EXEC -.->|«include»| UC_REST
-    UC_EXEC -.->|«extend»| UC_PR
-    UC_FEED -.->|«extend»| UC_LIKE
-    UC_FEED -.->|«extend»| UC_COMM
+    UC_TREINO -.->|include| UC_EXER
+    UC_EXEC -.->|include| UC_REST
+    UC_EXEC -.->|extend| UC_PR
+    UC_FEED -.->|extend| UC_LIKE
+    UC_FEED -.->|extend| UC_COMM
 ```
 
 - **Herança de Atores:** O *Atleta* herda todas as ações do *Visitante* e adiciona as operações logadas.
-- **«include»:** Executar treino inclui obrigatoriamente a cronometragem de descanso entre séries.
-- **«extend»:** Bater Recorde Pessoal (PR) e interações no feed (curtir/comentar) são extensões de fluxo.
+- **include:** Executar treino inclui obrigatoriamente a cronometragem de descanso entre séries.
+- **extend:** Bater Recorde Pessoal (PR) e interações no feed (curtir/comentar) são extensões de fluxo.
 
 ---
 
 ### 4.2. Diagrama de Classes de Domínio (UML)
-
-Mapeamento da camada de domínio do backend, tipagem com enumerações e relações de composição (`*--`):
 
 ```mermaid
 classDiagram
@@ -117,7 +106,6 @@ classDiagram
         RESISTENCIA
         EMAGRECIMENTO
     }
-
     class Modality {
         <<enumeration>>
         FORCA
@@ -126,7 +114,6 @@ classDiagram
         CALISTENIA
         ALONGAMENTO
     }
-
     class Division {
         <<enumeration>>
         BRONZE
@@ -134,7 +121,6 @@ classDiagram
         OURO
         DIAMANTE
     }
-
     class User {
         -String id
         -String name
@@ -142,25 +128,19 @@ classDiagram
         -String password
         -String avatarUrl
         -Int xp
-        -DateTime createdAt
-        -DateTime updatedAt
         +calculateDivision() Division
         +addXP(Int points) void
         +getTotalVolume() Float
     }
-
     class Workout {
         -String id
         -String userId
         -String name
         -WorkoutGoal goal
         -String level
-        -DateTime createdAt
-        -DateTime updatedAt
         +getEstimatedVolume() Float
         +getExercisesCount() Int
     }
-
     class Exercise {
         -String id
         -String workoutId
@@ -174,7 +154,6 @@ classDiagram
         -Int order
         +reorder(Int newOrder) void
     }
-
     class WorkoutSession {
         -String id
         -String workoutId
@@ -187,7 +166,6 @@ classDiagram
         +computeVolume() Float
         +getPersonalRecordsCount() Int
     }
-
     class SessionLog {
         -String id
         -String sessionId
@@ -199,40 +177,31 @@ classDiagram
         -Boolean isPersonalRecord
         +markCompleted() void
     }
-
     class Follow {
         -String id
         -String followerId
         -String followingId
-        -DateTime createdAt
     }
-
     class SessionLike {
         -String id
         -String sessionId
         -String userId
-        -DateTime createdAt
     }
-
     class SessionComment {
         -String id
         -String sessionId
         -String userId
         -String content
-        -DateTime createdAt
     }
-
-    Workout ..> WorkoutGoal : utiliza
-    Exercise ..> Modality : possui
-    User ..> Division : possui
-
+    Workout ..> WorkoutGoal
+    Exercise ..> Modality
+    User ..> Division
     User "1" --> "*" Workout : possui
-    Workout "1" *-- "1..*" Exercise : compõe
+    Workout "1" *-- "1..*" Exercise : compoe
     Workout "1" --> "*" WorkoutSession : gera
     WorkoutSession "1" *-- "1..*" SessionLog : registra
     Exercise "1" --> "*" SessionLog : referenciado
-
-    User "1" --> "*" Follow : follower / following
+    User "1" --> "*" Follow : seguidores
     User "1" --> "*" SessionLike : curte
     WorkoutSession "1" --> "*" SessionLike : recebe
     User "1" --> "*" SessionComment : escreve
@@ -243,104 +212,102 @@ classDiagram
 
 ### 4.3. Modelo Entidade-Relacionamento (MER / DER)
 
-Esquema físico relacional do **PostgreSQL 18** com chaves primárias UUID, índices únicos e deleção em cascata (`CASCADE`):
-
 ```mermaid
 erDiagram
-    USERS ||--o{ WORKOUTS : "1:N (possui)"
-    USERS ||--o{ FOLLOWS : "1:N (seguidor)"
-    USERS ||--o{ FOLLOWS : "1:N (seguido)"
-    USERS ||--o{ SESSION_LIKES : "1:N (curte)"
-    USERS ||--o{ SESSION_COMMENTS : "1:N (comenta)"
+    USERS ||--o{ WORKOUTS : possui
+    USERS ||--o{ FOLLOWS : seguidor
+    USERS ||--o{ FOLLOWS : seguido
+    USERS ||--o{ SESSION_LIKES : curte
+    USERS ||--o{ SESSION_COMMENTS : comenta
 
-    WORKOUTS ||--o{ EXERCISES : "1:N (composto por [CASCADE])"
-    WORKOUTS ||--o{ WORKOUT_SESSIONS : "1:N (execuções [CASCADE])"
+    WORKOUTS ||--o{ EXERCISES : composto_por
+    WORKOUTS ||--o{ WORKOUT_SESSIONS : execucoes
 
-    WORKOUT_SESSIONS ||--o{ SESSION_LOGS : "1:N (contém [CASCADE])"
-    EXERCISES ||--o{ SESSION_LOGS : "1:N (referencia)"
-    WORKOUT_SESSIONS ||--o{ SESSION_LIKES : "1:N (recebe [CASCADE])"
-    WORKOUT_SESSIONS ||--o{ SESSION_COMMENTS : "1:N (recebe [CASCADE])"
+    WORKOUT_SESSIONS ||--o{ SESSION_LOGS : contem
+    EXERCISES ||--o{ SESSION_LOGS : referencia
+    WORKOUT_SESSIONS ||--o{ SESSION_LIKES : recebe
+    WORKOUT_SESSIONS ||--o{ SESSION_COMMENTS : recebe
 
     USERS {
         uuid id PK
-        varchar name "NOT NULL"
-        varchar email "UK NOT NULL"
-        varchar password "NOT NULL"
-        varchar avatarUrl "NULL"
-        integer xp "DEFAULT 0 NOT NULL"
-        timestamp createdAt "DEFAULT NOW()"
-        timestamp updatedAt "DEFAULT NOW()"
+        varchar name
+        varchar email UK
+        varchar password
+        varchar avatarUrl
+        integer xp
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     WORKOUTS {
         uuid id PK
-        uuid userId FK "NOT NULL"
-        varchar name "NOT NULL"
-        varchar goal "NOT NULL (Enum)"
-        varchar level "NOT NULL (Enum)"
-        timestamp createdAt "DEFAULT NOW()"
-        timestamp updatedAt "DEFAULT NOW()"
+        uuid userId FK
+        varchar name
+        varchar goal
+        varchar level
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     EXERCISES {
         uuid id PK
-        uuid workoutId FK "NOT NULL"
-        varchar name "NOT NULL"
-        varchar modality "NOT NULL (Enum)"
-        integer sets "NOT NULL"
-        integer repetitions "NOT NULL"
-        float weight "DEFAULT 0"
-        integer restTime "DEFAULT 60"
-        text notes "NULL"
-        integer order "NOT NULL"
-        timestamp createdAt "DEFAULT NOW()"
-        timestamp updatedAt "DEFAULT NOW()"
+        uuid workoutId FK
+        varchar name
+        varchar modality
+        integer sets
+        integer repetitions
+        float weight
+        integer restTime
+        text notes
+        integer order
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     WORKOUT_SESSIONS {
         uuid id PK
-        uuid workoutId FK "NOT NULL"
-        timestamp startedAt "NOT NULL"
-        timestamp endedAt "NULL"
-        integer durationSeconds "DEFAULT 0"
-        float totalVolume "DEFAULT 0"
-        text notes "NULL"
-        timestamp createdAt "DEFAULT NOW()"
-        timestamp updatedAt "DEFAULT NOW()"
+        uuid workoutId FK
+        timestamp startedAt
+        timestamp endedAt
+        integer durationSeconds
+        float totalVolume
+        text notes
+        timestamp createdAt
+        timestamp updatedAt
     }
 
     SESSION_LOGS {
         uuid id PK
-        uuid sessionId FK "NOT NULL"
-        uuid exerciseId FK "NOT NULL"
-        integer setNumber "NOT NULL"
-        float weight "NOT NULL"
-        integer repetitions "NOT NULL"
-        boolean isCompleted "DEFAULT FALSE"
-        boolean isPersonalRecord "DEFAULT FALSE"
-        timestamp createdAt "DEFAULT NOW()"
+        uuid sessionId FK
+        uuid exerciseId FK
+        integer setNumber
+        float weight
+        integer repetitions
+        boolean isCompleted
+        boolean isPersonalRecord
+        timestamp createdAt
     }
 
     FOLLOWS {
         uuid id PK
-        uuid followerId FK "NOT NULL"
-        uuid followingId FK "NOT NULL"
-        timestamp createdAt "DEFAULT NOW()"
+        uuid followerId FK
+        uuid followingId FK
+        timestamp createdAt
     }
 
     SESSION_LIKES {
         uuid id PK
-        uuid sessionId FK "NOT NULL"
-        uuid userId FK "NOT NULL"
-        timestamp createdAt "DEFAULT NOW()"
+        uuid sessionId FK
+        uuid userId FK
+        timestamp createdAt
     }
 
     SESSION_COMMENTS {
         uuid id PK
-        uuid sessionId FK "NOT NULL"
-        uuid userId FK "NOT NULL"
-        text content "NOT NULL"
-        timestamp createdAt "DEFAULT NOW()"
+        uuid sessionId FK
+        uuid userId FK
+        text content
+        timestamp createdAt
     }
 ```
 
