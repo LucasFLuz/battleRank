@@ -8,7 +8,6 @@
 
 - **Disciplina**: Projeto de Software
 - **Professor**: Antônio
-- **Entrega Atual**: **AC1 - 1ª Atividade Contínua**
 
 ### 👥 Integrantes do Grupo
 | Nome do Aluno | RA | Responsabilidade Principal |
