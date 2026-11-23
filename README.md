@@ -18,7 +18,7 @@
 ### 🔗 Links da Entrega
 - **Repositório no GitHub**: [https://github.com/LucasFLuz/battleRankc](https://github.com/LucasFLuz/battleRankc)
 - **Board do Projeto (GitHub Projects)**: [https://github.com/users/LucasFLuz/projects/1/views/2](https://github.com/users/LucasFLuz/projects/1/views/2)
-- **Vídeo Demonstrativo da Sprint (AC1)**: *[Inserir link do YouTube / Drive / Loom aqui]*
+
 
 ---
 
