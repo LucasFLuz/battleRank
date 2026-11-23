@@ -13,6 +13,7 @@ export class WorkoutRepository {
         scheduleType: data.scheduleType ?? "FLEXIBLE",
         daysOfWeek: data.daysOfWeek ?? [],
         frequency: data.frequency ?? null,
+        userId: data.userId,
       },
       include: {
         exercises: {
@@ -24,8 +25,9 @@ export class WorkoutRepository {
     return created as Workout;
   }
 
-  async findAll(): Promise<Workout[]> {
+  async findAllByUser(userId: string): Promise<Workout[]> {
     const workouts = await prisma.workout.findMany({
+      where: { userId },
       orderBy: {
         createdAt: "desc",
       },

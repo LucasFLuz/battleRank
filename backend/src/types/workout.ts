@@ -65,6 +65,7 @@ export type Modality =
 
 export interface Workout {
   id: string;
+  userId: string;
   name: string;
   goal: WorkoutGoal;
   level: WorkoutLevel;
@@ -91,6 +92,7 @@ export interface CreateWorkoutDTO {
   scheduleType?: ScheduleType;
   daysOfWeek?: number[];
   frequency?: number;
+  userId: string;
 }
 
 export interface UpdateWorkoutDTO {

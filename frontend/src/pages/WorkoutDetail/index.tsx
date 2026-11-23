@@ -262,8 +262,8 @@ export const WorkoutDetailPage: React.FC = () => {
           <ArrowLeft className="w-4 h-4" /> Voltar para Meus Treinos
         </Link>
 
-        <div className="flex items-center gap-3">
-          <Button variant="outline" size="md" onClick={handleOpenCreate} className="gap-2">
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="outline" size="md" onClick={handleOpenCreate} className="gap-2 flex-1 sm:flex-none justify-center">
             <Plus className="w-4 h-4" />
             Adicionar Exercício
           </Button>

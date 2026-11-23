@@ -107,6 +107,45 @@ export class SessionRepository {
     return sessions as WorkoutSession[];
   }
 
+  async findAllByUser(userId: string): Promise<WorkoutSession[]> {
+    const sessions = await prisma.workoutSession.findMany({
+      where: {
+        workout: {
+          userId,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        workout: {
+          select: {
+            id: true,
+            name: true,
+            goal: true,
+            level: true,
+          },
+        },
+        logs: {
+          include: {
+            exercise: {
+              select: {
+                id: true,
+                name: true,
+                modality: true,
+              },
+            },
+          },
+          orderBy: {
+            setNumber: "asc",
+          },
+        },
+      },
+    });
+
+    return sessions as WorkoutSession[];
+  }
+
   async findById(id: string): Promise<WorkoutSession | null> {
     const session = await prisma.workoutSession.findUnique({
       where: { id },

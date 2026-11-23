@@ -3,6 +3,7 @@ import { WorkoutController } from "../controllers/workoutController.js";
 import { ExerciseController } from "../controllers/exerciseController.js";
 import { SessionController } from "../controllers/sessionController.js";
 import { validateRequest } from "../middlewares/validateRequest.js";
+import { ensureAuthenticated } from "../middlewares/ensureAuthenticated.js";
 import { createWorkoutSchema, updateWorkoutSchema } from "../validations/workoutSchema.js";
 import { createExerciseSchema } from "../validations/exerciseSchema.js";
 import { saveSessionSchema } from "../validations/sessionSchema.js";
@@ -11,6 +12,9 @@ const router = Router();
 const workoutController = new WorkoutController();
 const exerciseController = new ExerciseController();
 const sessionController = new SessionController();
+
+// Protege todas as rotas com autenticação JWT (AC3)
+router.use(ensureAuthenticated);
 
 // Rotas de Treinos (AC1)
 router.get("/", workoutController.list);

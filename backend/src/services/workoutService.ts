@@ -14,29 +14,38 @@ export class WorkoutService {
       scheduleType: data.scheduleType,
       daysOfWeek: data.daysOfWeek,
       frequency: data.frequency,
+      userId: data.userId,
     };
 
     return await this.workoutRepository.create(sanitizedData);
   }
 
-  async listWorkouts(): Promise<Workout[]> {
-    return await this.workoutRepository.findAll();
+  async listWorkouts(userId: string): Promise<Workout[]> {
+    return await this.workoutRepository.findAllByUser(userId);
   }
 
-  async getWorkoutById(id: string): Promise<Workout> {
+  async getWorkoutById(id: string, userId: string): Promise<Workout> {
     const workout = await this.workoutRepository.findById(id);
 
     if (!workout) {
       throw new Error(`Treino com ID ${id} não foi encontrado.`);
     }
 
+    if (workout.userId !== userId) {
+      throw new Error("Acesso negado.");
+    }
+
     return workout;
   }
 
-  async updateWorkout(id: string, data: UpdateWorkoutDTO): Promise<Workout> {
+  async updateWorkout(id: string, userId: string, data: UpdateWorkoutDTO): Promise<Workout> {
     const workout = await this.workoutRepository.findById(id);
     if (!workout) {
       throw new Error(`Treino com ID ${id} não foi encontrado.`);
+    }
+
+    if (workout.userId !== userId) {
+      throw new Error("Acesso negado.");
     }
 
     const sanitizedData: UpdateWorkoutDTO = {
@@ -53,10 +62,14 @@ export class WorkoutService {
     return await this.workoutRepository.update(id, sanitizedData);
   }
 
-  async deleteWorkout(id: string): Promise<void> {
+  async deleteWorkout(id: string, userId: string): Promise<void> {
     const workout = await this.workoutRepository.findById(id);
     if (!workout) {
       throw new Error(`Treino com ID ${id} não foi encontrado.`);
+    }
+
+    if (workout.userId !== userId) {
+      throw new Error("Acesso negado.");
     }
 
     await this.workoutRepository.delete(id);

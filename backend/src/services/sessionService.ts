@@ -8,13 +8,23 @@ export class SessionService {
     private readonly workoutRepository: WorkoutRepository = new WorkoutRepository()
   ) {}
 
-  async finishSession(workoutId: string, data: SaveSessionDTO): Promise<WorkoutSession> {
+  private async verifyWorkoutOwnership(workoutId: string, userId: string): Promise<void> {
     const workout = await this.workoutRepository.findById(workoutId);
     if (!workout) {
       const err = new Error(`Treino com ID ${workoutId} não foi encontrado.`);
       (err as unknown as { statusCode: number }).statusCode = 404;
       throw err;
     }
+
+    if (workout.userId !== userId) {
+      const err = new Error("Acesso negado.");
+      (err as unknown as { statusCode: number }).statusCode = 403;
+      throw err;
+    }
+  }
+
+  async finishSession(workoutId: string, userId: string, data: SaveSessionDTO): Promise<WorkoutSession> {
+    await this.verifyWorkoutOwnership(workoutId, userId);
 
     // Calcula volume total levantado: soma de (peso * repeticoes) para todas as series completadas
     const calculatedVolume = data.logs.reduce((acc, log) => {
@@ -27,17 +37,20 @@ export class SessionService {
     return await this.sessionRepository.saveSession(workoutId, data, calculatedVolume);
   }
 
-  async listHistory(): Promise<WorkoutSession[]> {
-    return await this.sessionRepository.findAll();
+  async listHistory(userId: string): Promise<WorkoutSession[]> {
+    return await this.sessionRepository.findAllByUser(userId);
   }
 
-  async getSessionById(id: string): Promise<WorkoutSession> {
+  async getSessionById(id: string, userId: string): Promise<WorkoutSession> {
     const session = await this.sessionRepository.findById(id);
     if (!session) {
       const err = new Error(`Sessão com ID ${id} não foi encontrada.`);
       (err as unknown as { statusCode: number }).statusCode = 404;
       throw err;
     }
+
+    // Verify ownership through the workout
+    await this.verifyWorkoutOwnership(session.workoutId, userId);
 
     return session;
   }

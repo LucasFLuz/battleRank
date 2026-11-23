@@ -32,6 +32,7 @@ export const createWorkoutSchema = z.object({
   scheduleType: z.enum(["FIXED_DAYS", "FLEXIBLE"]).default("FLEXIBLE").optional(),
   daysOfWeek: z.array(z.number().int().min(0).max(6)).default([]).optional(),
   frequency: z.number().int().min(1).max(7).optional(),
+  userId: z.string().uuid().optional(),
 });
 
 export const updateWorkoutSchema = createWorkoutSchema.partial();
